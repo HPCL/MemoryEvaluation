@@ -99,6 +99,8 @@ int main(int argc, char** argv)
 			{
 				BinaryAnalysis::DwarfLineMapper::SrcInfo srcInfo = lineMap.addr2src((*ins) -> get_address());
 				int lineNum = srcInfo.line_num;
+				// here each instructions is mapped to corresponding line number
+				// currently not in use
 				// check if line number already exists in the map
 				if (im -> find(lineNum) == im -> end())
 				{
@@ -110,11 +112,14 @@ int main(int argc, char** argv)
 
 					// line number doesn't exit				
 					(im -> find(lineNum) -> second).push_back(*ins);
-				}
+				} 
+				// currently not in use ends
+				
 #if 0			
 				// test
 				cout<<"Instruction " << ((SgAsmX86Instruction*)(*ins)) -> get_kind()<< " base size "<<((SgAsmX86Instruction*)(*ins)) -> get_size() << " operand size "<<((SgAsmX86Instruction*)(*ins)) -> get_operandSize()<< " " << (*ins)->get_mnemonic()<<" line "<< lineMap.addr2src((*ins)->get_address()).line_num <<" size "<< (*ins) -> get_size()<<endl;	
 #endif 			
+				// go through the instructions from Binary file
 				// find instructions belong to loops
 				if(loopMap.find(lineNum) != loopMap.end())
 				{
@@ -137,11 +142,11 @@ int main(int argc, char** argv)
 					}
 				}
 
-				if(lineNum >= firstLine && lineNum <= lastLine)
+				if(lineNum >= firstLine && lineNum <= lastLine) 
 				{
 					loopVec.back().push_back(*ins);
 				}
-	
+		
 			}	
 		}
 	}
@@ -174,14 +179,14 @@ int main(int argc, char** argv)
 	
 	const RegisterDictionary* regdict = RegisterDictionary::dictionary_amd64();
 	ConcreteSemantics::MiraRiscOperatorsPtr operators = ConcreteSemantics::MiraRiscOperators::instance(regdict);
-	BaseSemantics::DispatcherPtr dispatcher = DispatcherX86::instance(operators, 32);
-	// test
+	BaseSemantics::DispatcherPtr dispatcher = DispatcherX86::instance(operators, 64);
 	
 	for(vector< vector<SgAsmInstruction*> >::iterator it = loopVec.begin(); it != loopVec.end(); it++) {
 		vector<SgAsmInstruction*> instrVec = (*it);
+		// instructions for one loop
 		for (vector<SgAsmInstruction*>::iterator iit = instrVec.begin(); iit != instrVec.end(); iit++)
 		{
-			//cout << "instruction: "<< (*iit) -> get_mnemonic() << endl; 	
+			cout << "instruction: "<< (*iit) -> get_mnemonic() << endl; 	
 			dispatcher -> processInstruction(*iit);
 		}
 		cout << "---------------------------------------------------" << endl;
