@@ -2,6 +2,10 @@
 #define MIRASEMANTICS_H
 
 #include "ConcreteSemantics2.h"
+//#include "RegisterStateGeneric.h"
+#include <iostream>
+
+using namespace std;
 
 namespace rose {
 namespace BinaryAnalysis {
@@ -47,6 +51,7 @@ namespace ConcreteSemantics {
 			assert(retval!=NULL);
 			return retval;
 		}
+		
 
 	}; // end class MiraMemoryState
 
@@ -97,14 +102,18 @@ namespace ConcreteSemantics {
 			assert(retval!=NULL);
 			return retval;
 		}
+	
+		virtual void writeMemory1(const RegisterDescriptor &segreg, const BaseSemantics::SValuePtr &address,
+								 const BaseSemantics::SValuePtr &value_, const BaseSemantics::SValuePtr &cond) ROSE_OVERRIDE;
+
+		virtual BaseSemantics::SValuePtr readMemory1(const RegisterDescriptor &segreg, const BaseSemantics::SValuePtr &address,
+													const BaseSemantics::SValuePtr &value_, const BaseSemantics::SValuePtr &cond) ROSE_OVERRIDE;
 
 	}; // end class MiraRiscOperators
 
-			} // end namespace ConcreteSemantics
-
-		} //end namespace InstructionSemantics2	
-
-	} //end namespace BinaryAnalysis
+} // end namespace ConcreteSemantics
+} //end namespace InstructionSemantics2	
+} //end namespace BinaryAnalysis
 }
 
 

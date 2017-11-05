@@ -1,5 +1,5 @@
 PROGRAM = memEval
-SOURCES = MemEval.C
+SOURCES = MiraSemantics.C MemEval.C
 OBJECTS = $(SOURCES:.C=.o)
 
 

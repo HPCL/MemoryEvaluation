@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 	
 	// vector of vector for storing instructions of each loop
 	vector< vector<SgAsmInstruction*> > loopVec;
-    // map to store loop info
+	// map to store loop info
 	boost::unordered_map<int, std::pair<int, int> > loopMap;
 	// process source code
 	// locate loops in source 
@@ -151,35 +151,11 @@ int main(int argc, char** argv)
 		}
 	}
 
-	/*
-	for(vector<SgForStatement*>::iterator it = forStatVec.begin(); it != forStatVec.end(); it++) {
-		SgForStatement* forStat = *it;
-		// get for loop body
-		SgStatement* body = forStat -> get_loop_body();
-		// query each statement from the loop tree
-		vector<SgStatement*> statVec = SageInterface::querySubTree<SgStatement>(body);	
-		SgStatement* first = SageInterface::getFirstStatement((SgScopeStatement*)body);
-		SgAsmInstruction* firstInBody = (im -> find(first->get_file_info()->get_line()) -> second)[0];
-		SgAsmBlock* asmBlk = SageInterface::getEnclosingNode<SgAsmBlock>(firstInBody);
-		SgAsmBlock* allLoop = SageInterface::getEnclosingNode<SgAsmBlock>(asmBlk);
-		vector<SgAsmBlock*> allBlk = SageInterface::querySubTree<SgAsmBlock>(allLoop);
-		int idx = findIndex(allBlk, asmBlk);
-		if (idx > 0)
-		{
-			vector<SgAsmInstruction*> loopInit = SageInterface::querySubTree<SgAsmInstruction>(allBlk[idx-1]);
-			vector<SgAsmInstruction*> loopBody = SageInterface::querySubTree<SgAsmInstruction>(asmBlk);
-			vector<SgAsmInstruction*> loopComp = SageInterface::querySubTree<SgAsmInstruction>(allBlk[idx+1]);
-			instrVec.reserve(loopInit.size()+loopBody.size()+loopComp.size());
-			instrVec.insert(instrVec.end(), loopInit.begin(), loopInit.end());		
-			instrVec.insert(instrVec.end(), loopBody.begin(), loopBody.end());		
-			instrVec.insert(instrVec.end(), loopComp.begin(), loopComp.end());		
-		}		
-	} 
-	*/
 	
-	const RegisterDictionary* regdict = RegisterDictionary::dictionary_amd64();
-	ConcreteSemantics::MiraRiscOperatorsPtr operators = ConcreteSemantics::MiraRiscOperators::instance(regdict);
-	BaseSemantics::DispatcherPtr dispatcher = DispatcherX86::instance(operators, 64);
+	
+	const RegisterDictionary* regdict = RegisterDictionary::dictionary_pentium4();
+	BaseSemantics::RiscOperatorsPtr operators = ConcreteSemantics::MiraRiscOperators::instance(regdict);
+	BaseSemantics::DispatcherPtr dispatcher = DispatcherX86::instance(operators, 32);
 	
 	for(vector< vector<SgAsmInstruction*> >::iterator it = loopVec.begin(); it != loopVec.end(); it++) {
 		vector<SgAsmInstruction*> instrVec = (*it);
