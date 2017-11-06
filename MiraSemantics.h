@@ -2,7 +2,6 @@
 #define MIRASEMANTICS_H
 
 #include "ConcreteSemantics2.h"
-//#include "RegisterStateGeneric.h"
 #include <iostream>
 
 using namespace std;
@@ -37,7 +36,7 @@ namespace ConcreteSemantics {
 	// virtual constructors
 	public:
 		virtual BaseSemantics::MemoryStatePtr clone() const ROSE_OVERRIDE {
-			return BaseSemantics::MemoryStatePtr(new MiraMemoryState(*this));
+			return MiraMemoryStatePtr(new MiraMemoryState(*this));
 		}
 
 		virtual BaseSemantics::MemoryStatePtr create(const BaseSemantics::SValuePtr &addr, const BaseSemantics::SValuePtr &val) const ROSE_OVERRIDE {
@@ -70,10 +69,10 @@ namespace ConcreteSemantics {
 	// static allocating constructor
 	public:
 		static MiraRiscOperatorsPtr instance(const RegisterDictionary *regdict, SMTSolver *solver=NULL) {
-			BaseSemantics::SValuePtr protoval = SValue::instance();
-			BaseSemantics::RegisterStatePtr registers = RegisterState::instance(protoval, regdict);
-			BaseSemantics::MemoryStatePtr memory = MemoryState::instance(protoval, protoval);
-			BaseSemantics::StatePtr state = State::instance(registers, memory);
+			BaseSemantics::SValuePtr protoval = ConcreteSemantics::SValue::instance();
+			BaseSemantics::RegisterStatePtr registers = BaseSemantics::RegisterStateGeneric::instance(protoval, regdict);
+			BaseSemantics::MemoryStatePtr memory = MiraMemoryState::instance(protoval, protoval);
+			BaseSemantics::StatePtr state = BaseSemantics::State::instance(registers, memory);
 			return MiraRiscOperatorsPtr(new MiraRiscOperators(state, solver));
 		}
 
