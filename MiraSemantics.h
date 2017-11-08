@@ -11,6 +11,71 @@ namespace BinaryAnalysis {
 namespace InstructionSemantics2 {
 namespace ConcreteSemantics {
 	
+	// derive SValue may not be necessary at this time
+	typedef Sawyer::SharedPointer<class MiraSValue> MiraSValuePtr;
+
+	class MiraSValue : public ConcreteSemantics::SValue {
+	protected:
+		explicit MiraSValue(size_t nbits) : ConcreteSemantics::SValue(nbits) {}
+		
+		MiraSValue(size_t nbits, uint64_t number) : ConcreteSemantics::SValue(nbits, number) {}
+		
+	public:
+		static MiraSValuePtr instance() {
+			return MiraSValuePtr(new MiraSValue(1));
+		}
+
+		static MiraSValuePtr instance(size_t nbits) {
+			return MiraSValuePtr(new MiraSValue(nbits));
+		}
+
+		static MiraSValuePtr instance(size_t nbits, uint64_t value) {
+			return MiraSValuePtr(new MiraSValue(nbits, value));
+		}
+
+		// virtual allocating constructor
+	public:
+		virtual BaseSemantics::SValuePtr undefined_(size_t nbits) const ROSE_OVERRIDE {
+			return instance(nbits); 
+		}
+
+		virtual BaseSemantics::SValuePtr unspecified_(size_t nbits) const ROSE_OVERRIDE {
+			return instance(nbits);
+		}
+
+		virtual BaseSemantics::SValuePtr bottom_(size_t nbits) const ROSE_OVERRIDE {
+			return instance(nbits);
+		}
+
+		virtual BaseSemantics::SValuePtr number_(size_t nbits, uint64_t value) const ROSE_OVERRIDE {
+			return instance(nbits, value);
+		}
+
+		virtual BaseSemantics::SValuePtr boolean_(bool value) const ROSE_OVERRIDE {
+			return instance(1, value ? 1 : 0);
+		}
+
+		virtual BaseSemantics::SValuePtr copy(size_t new_width=0) const ROSE_OVERRIDE {
+			SValuePtr retval(new SValue(*this));
+			if (new_width!=0 && new_width!=retval->get_width())
+				retval->set_width(new_width);
+			return retval; 
+		}
+
+		virtual Sawyer::Optional<BaseSemantics::SValuePtr> createOptionalMerge(const BaseSemantics::SValuePtr &other, 
+				const BaseSemantics::MergerPtr&, SMTSolver*) const ROSE_OVERRIDE {
+			throw BaseSemantics::NotImplemented("SValue merging for ConcreteSemantics is not supported", NULL);
+		}
+
+	public:
+		// dynamic cast
+		static MiraSValuePtr promote(const BaseSemantics::SValuePtr &v) {
+			MiraSValuePtr retval = v.dynamicCast<MiraSValue>();
+			ASSERT_not_null(retval);
+			return retval;
+		}
+	};
+	
 	// smart pointer 
 	typedef boost::shared_ptr<class MiraMemoryState> MiraMemoryStatePtr;		
 	
@@ -69,7 +134,7 @@ namespace ConcreteSemantics {
 	// static allocating constructor
 	public:
 		static MiraRiscOperatorsPtr instance(const RegisterDictionary *regdict, SMTSolver *solver=NULL) {
-			BaseSemantics::SValuePtr protoval = ConcreteSemantics::SValue::instance();
+			BaseSemantics::SValuePtr protoval = MiraSValue::instance();
 			BaseSemantics::RegisterStatePtr registers = BaseSemantics::RegisterStateGeneric::instance(protoval, regdict);
 			BaseSemantics::MemoryStatePtr memory = MiraMemoryState::instance(protoval, protoval);
 			BaseSemantics::StatePtr state = BaseSemantics::State::instance(registers, memory);
@@ -102,10 +167,10 @@ namespace ConcreteSemantics {
 			return retval;
 		}
 	
-		virtual void writeMemory1(const RegisterDescriptor &segreg, const BaseSemantics::SValuePtr &address,
+		virtual void writeMemory(const RegisterDescriptor &segreg, const BaseSemantics::SValuePtr &address,
 								 const BaseSemantics::SValuePtr &value_, const BaseSemantics::SValuePtr &cond) ROSE_OVERRIDE;
 
-		virtual BaseSemantics::SValuePtr readMemory1(const RegisterDescriptor &segreg, const BaseSemantics::SValuePtr &address,
+		virtual BaseSemantics::SValuePtr readMemory(const RegisterDescriptor &segreg, const BaseSemantics::SValuePtr &address,
 													const BaseSemantics::SValuePtr &value_, const BaseSemantics::SValuePtr &cond) ROSE_OVERRIDE;
 
 	}; // end class MiraRiscOperators
