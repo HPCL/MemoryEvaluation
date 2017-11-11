@@ -1,7 +1,7 @@
 #include "rose.h"
 #include "DwarfLineMapper.h"
 #include "Partitioner2/Engine.h"
-#include "AsmUnparser.h"
+#include "Disassembler.h"
 #include <boost/units/detail/utility.hpp>
 #include <iostream>
 #include <string>
@@ -11,6 +11,7 @@
 using namespace std;
 using namespace rose;
 using namespace rose::BinaryAnalysis::InstructionSemantics2;
+
 typedef boost::unordered_map<int, std::vector<SgAsmInstruction*> > instrMap;
 
 
@@ -136,8 +137,8 @@ int main(int argc, char** argv)
 						// update loopFlag
 						loopFlag.insert(make_pair(lineNum, 1));
 					}else{
-						// loop head comparision
-						// after loop body
+						// loop head is separated by loop body
+						// add the loop comparison part 
 						loopVec.back().push_back(*ins);
 					}
 				}
@@ -151,11 +152,9 @@ int main(int argc, char** argv)
 		}
 	}
 
-	
-	
-	const RegisterDictionary* regdict = RegisterDictionary::dictionary_pentium4();
+	const RegisterDictionary* regdict = RegisterDictionary::dictionary_amd64();
 	BaseSemantics::RiscOperatorsPtr operators = ConcreteSemantics::MiraRiscOperators::instance(regdict);
-	BaseSemantics::DispatcherPtr dispatcher = DispatcherX86::instance(operators, 32);
+	BaseSemantics::DispatcherPtr dispatcher = DispatcherX86::instance(operators, 64);
 	
 	for(vector< vector<SgAsmInstruction*> >::iterator it = loopVec.begin(); it != loopVec.end(); it++) {
 		vector<SgAsmInstruction*> instrVec = (*it);
