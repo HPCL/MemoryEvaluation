@@ -9,8 +9,8 @@
 #include "MiraSemantics.h"
 
 using namespace std;
-using namespace rose;
-using namespace rose::BinaryAnalysis::InstructionSemantics2;
+using namespace Rose;
+using namespace Rose::BinaryAnalysis::InstructionSemantics2;
 
 typedef boost::unordered_map<int, std::vector<SgAsmInstruction*> > instrMap;
 
@@ -153,7 +153,7 @@ int main(int argc, char** argv)
 	}
 
 	const RegisterDictionary* regdict = RegisterDictionary::dictionary_amd64();
-	BaseSemantics::RiscOperatorsPtr operators = ConcreteSemantics::MiraRiscOperators::instance(regdict);
+	BaseSemantics::RiscOperatorsPtr operators = MiraRiscOperators::instance(regdict);
 	BaseSemantics::DispatcherPtr dispatcher = DispatcherX86::instance(operators, 64);
 	
 	for(vector< vector<SgAsmInstruction*> >::iterator it = loopVec.begin(); it != loopVec.end(); it++) {

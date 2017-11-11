@@ -2,11 +2,7 @@
 #include "MiraSemantics.h"
 
 using namespace std;
-
-namespace rose {
-namespace BinaryAnalysis {
-namespace InstructionSemantics2 {
-namespace ConcreteSemantics {
+using namespace Rose::BinaryAnalysis::InstructionSemantics2;
 	
 	
 void 
@@ -24,12 +20,3 @@ MiraRiscOperators::readMemory(const RegisterDescriptor &segreg, const BaseSemant
 {
 	return ConcreteSemantics::RiscOperators::readMemory(segreg, address, value_, cond);
 }
-
-
-} // end namespace ConcreteSemantics
-} // end namespace InstructionSemantics2	
-} // end namespace BinaryAnalysis
-} // end namespace rose
-
-
-
