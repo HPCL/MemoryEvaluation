@@ -4,13 +4,11 @@
 #include "ConcreteSemantics2.h"
 #include <iostream>
 
+// "using namespace" in headers is probably not wise, but it is expedient for now
 using namespace std;
+using namespace Rose::BinaryAnalysis;
+using namespace Rose::BinaryAnalysis::InstructionSemantics2;
 
-namespace rose {
-namespace BinaryAnalysis {
-namespace InstructionSemantics2 {
-namespace ConcreteSemantics {
-	
 	// derive SValue may not be necessary at this time
 	typedef Sawyer::SharedPointer<class MiraSValue> MiraSValuePtr;
 
@@ -56,7 +54,7 @@ namespace ConcreteSemantics {
 		}
 
 		virtual BaseSemantics::SValuePtr copy(size_t new_width=0) const ROSE_OVERRIDE {
-			SValuePtr retval(new SValue(*this));
+                    BaseSemantics::SValuePtr retval(new MiraSValue(*this));
 			if (new_width!=0 && new_width!=retval->get_width())
 				retval->set_width(new_width);
 			return retval; 
@@ -64,7 +62,7 @@ namespace ConcreteSemantics {
 
 		virtual Sawyer::Optional<BaseSemantics::SValuePtr> createOptionalMerge(const BaseSemantics::SValuePtr &other, 
 				const BaseSemantics::MergerPtr&, SMTSolver*) const ROSE_OVERRIDE {
-			throw BaseSemantics::NotImplemented("SValue merging for ConcreteSemantics is not supported", NULL);
+			throw BaseSemantics::NotImplemented("SValue merging for MiraSemantics is not supported", NULL);
 		}
 
 	public:
@@ -174,12 +172,5 @@ namespace ConcreteSemantics {
 													const BaseSemantics::SValuePtr &value_, const BaseSemantics::SValuePtr &cond) ROSE_OVERRIDE;
 
 	}; // end class MiraRiscOperators
-
-} // end namespace ConcreteSemantics
-} //end namespace InstructionSemantics2	
-} //end namespace BinaryAnalysis
-}
-
-
 
 #endif
